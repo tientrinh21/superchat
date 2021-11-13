@@ -66,8 +66,11 @@ function Chatroom() {
 		const { uid, photoURL } = auth.currentUser
 
 		if (formValue !== '') {
-			let textToBeAdded = ''
-			if (formValue.includes('shit') || formValue.includes('fuck')) textToBeAdded = '🤐 CENSORED'
+			// Check if user say bad words and censored them
+			const badWords = ['shit', 'fuck', 'dick', 'ass', 'motherfucker', 'pussy', 'whore']
+			let textToBeAdded = formValue.toLowerCase()
+
+			if (badWords.some(word => textToBeAdded.includes(word))) textToBeAdded = '🤐 CENSORED'
 			else textToBeAdded = formValue
 
 			await messagesRef.add({
