@@ -54,7 +54,7 @@ function Chatroom() {
 	const dummy = useRef()
 
 	const messagesRef = firestore.collection('messages')
-	const query = messagesRef.orderBy('createdAt').limit(25)
+	const query = messagesRef.orderBy('createdAt').limit(200)
 
 	const [messages] = useCollectionData(query, { idField: 'id' })
 
@@ -65,16 +65,21 @@ function Chatroom() {
 
 		const { uid, photoURL } = auth.currentUser
 
-		await messagesRef.add({
-			text: formValue,
-			createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-			uid,
-			photoURL,
-		})
+		if (formValue !== '') {
+			let textToBeAdded = ''
+			if (formValue.includes('shit') || formValue.includes('fuck')) textToBeAdded = '🤐 CENSORED'
+			else textToBeAdded = formValue
 
-		setFormValue('')
+			await messagesRef.add({
+				text: textToBeAdded,
+				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+				uid,
+				photoURL,
+			})
 
-		dummy.current.scrollIntoView({ behavior: 'smooth' })
+			setFormValue('')
+			dummy.current.scrollIntoView({ behavior: 'smooth' })
+		}
 	}
 
 	return (
